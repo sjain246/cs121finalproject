@@ -3,6 +3,7 @@ DROP PROCEDURE IF EXISTS sp_all_newroutes;
 DROP TRIGGER IF EXISTS trg_route_insert;
 DROP TRIGGER IF EXISTS trg_route_update;
 DROP PROCEDURE IF EXISTS sp_newroute;
+DROP FUNCTION IF EXISTS tot_delay_route;
 DROP FUNCTION IF EXISTS tot_delay;
 
 SET max_sp_recursion_depth = 1;
