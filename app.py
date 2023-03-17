@@ -76,11 +76,11 @@ def authenticate(maybeusername, maybepassword):
     try:
         conn = mysql.connector.connect(
           host='localhost',
-          user='appclient',
+          user='appadmin',
           # Find port in MAMP or MySQL Workbench GUI or with
           # SHOW VARIABLES WHERE variable_name LIKE 'port';
           port='3306',  # this may change!
-          password='clientpw',
+          password='adminpw',
           database='flightdb' # replace this with your database name
         )
 
