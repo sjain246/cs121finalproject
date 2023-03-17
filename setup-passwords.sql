@@ -1,4 +1,8 @@
 -- File for Password Management section of Final Project
+DROP FUNCTION IF EXISTS make_salt;
+DROP TABLE IF EXISTS user_info;
+DROP PROCEDURE IF EXISTS sp_add_user;
+DROP FUNCTION IF EXISTS authenticate;
 
 -- (Provided) This function generates a specified number of characters for using as a
 -- salt in passwords.
@@ -52,6 +56,7 @@ DELIMITER !
 CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20))
 BEGIN
   -- TODO
+  DECLARE salt VARCHAR(20) DEFAULT '';
   SET salt = make_salt(8);
   INSERT INTO user_info VALUES 
     (new_username, salt, SHA2(CONCAT(salt, password), 256));
@@ -83,8 +88,8 @@ DELIMITER ;
 -- [Problem 1c]
 -- Add at least two users into your user_info table so that when we run this file,
 -- we will have examples users in the database.
-CALL sp_add_user("eyhan", "password1121%9");
-CALL sp_add_user("sjain3", "strongpass38:*3");
+CALL sp_add_user('eyhan', 'password1121%9');
+CALL sp_add_user('sjain3', 'strongpass38:*3');
 
 -- [Problem 1d]
 -- Optional: Create a procedure sp_change_password to generate a new salt and change the given
