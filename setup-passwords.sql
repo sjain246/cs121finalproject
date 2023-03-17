@@ -98,7 +98,7 @@ DELIMITER ;
 -- [Problem 1c]
 -- Add at least two users into your user_info table so that when we run this file,
 -- we will have examples users in the database.
-CALL sp_add_user('eyhan', 'password11219', 2);
+CALL sp_add_user('eyhan', 'password11219', 1);
 CALL sp_add_user('sjain3', 'strongpass383', 2);
 
 -- [Problem 1d]
