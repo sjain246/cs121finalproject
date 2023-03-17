@@ -469,7 +469,7 @@ def home_screen():
     elif ans == 'l':
         maybeusername = input("Enter your username: ")
         maybepassword = input("Enter your password: ")
-        role = authenticate(maybeusername, maybepassword)
+        role = authenticate(maybeusername, maybepassword) [0][0]
         if role == 0:
             print("Login Failed!")
         else:
