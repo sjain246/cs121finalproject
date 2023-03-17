@@ -84,13 +84,12 @@ BEGIN
   IF temp = 0 THEN
 	  RETURN 0;
   END IF;
-  IF rtemp = 1 THEN
+  IF temp = 1 AND rtemp = 1 THEN
     RETURN 1;
   END IF;
-  IF rtemp = 2 THEN
+  IF temp = 1 AND rtemp = 2 THEN
     RETURN 2;
   END IF;
-  RETURN 3;
 END !
 DELIMITER ;
 

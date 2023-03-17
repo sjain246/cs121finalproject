@@ -91,12 +91,11 @@ def authenticate(maybeusername, maybepassword):
         rows = cursor.fetchall()
         if not rows:
             sys.stderr("Username does not exist!")
-        if len(rows) != 1:
-            sys.stderr("Multiple users with this username")
         else:
-            for row in rows:
-                (col1val) = (row) # tuple unpacking!
-                return(col1val)
+            (col1val) = (rows) # tuple unpacking!
+            if col1val == 0:
+                sys.stderr("Username does not exist!")
+            return col1val
     except mysql.connector.Error as err:
         # Remember that this is specific to _database_ users, not
         # application users. So is probably irrelevant to a client in your
