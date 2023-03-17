@@ -72,7 +72,7 @@ CREATE FUNCTION authenticate(username VARCHAR(20), password VARCHAR(20))
 RETURNS TINYINT DETERMINISTIC
 BEGIN
   -- TODO
-  DECLARE temp INT;
+  DECLARE temp INT DEFAULT 0;
   SELECT COUNT(username) INTO temp
   FROM user_info 
   WHERE user_info.username = username AND 
