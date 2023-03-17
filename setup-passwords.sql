@@ -52,6 +52,9 @@ DELIMITER !
 CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20))
 BEGIN
   -- TODO
+  SET salt = make_salt(8);
+  INSERT INTO user_info VALUES 
+    (new_username, salt, SHA2(CONCAT(salt, password), 256));
 END !
 DELIMITER ;
 
@@ -64,13 +67,24 @@ CREATE FUNCTION authenticate(username VARCHAR(20), password VARCHAR(20))
 RETURNS TINYINT DETERMINISTIC
 BEGIN
   -- TODO
+  DECLARE temp INT;
+  SELECT COUNT(username) INTO temp
+  FROM user_info 
+  WHERE user_info.username = username AND 
+    user_info.password_hash = SHA2(CONCAT(user_info.salt, password), 256);
+  IF temp > 0 THEN
+	  RETURN 1;
+  ELSE
+	  RETURN 0;
+  END IF;
 END !
 DELIMITER ;
 
 -- [Problem 1c]
 -- Add at least two users into your user_info table so that when we run this file,
 -- we will have examples users in the database.
-
+CALL sp_add_user("eyhan", "password1121%9");
+CALL sp_add_user("sjain3", "strongpass38:*3");
 
 -- [Problem 1d]
 -- Optional: Create a procedure sp_change_password to generate a new salt and change the given
