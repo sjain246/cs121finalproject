@@ -1,5 +1,4 @@
 -- File for Password Management section of Final Project
-DROP FUNCTION IF EXISTS make_salt;
 DROP TABLE IF EXISTS user_info;
 DROP PROCEDURE IF EXISTS sp_add_user;
 DROP FUNCTION IF EXISTS authenticate;
