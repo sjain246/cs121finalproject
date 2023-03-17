@@ -81,7 +81,8 @@ BEGIN
   SELECT COUNT(username), role INTO temp, rtemp
   FROM user_info 
   WHERE user_info.username = usern AND 
-    user_info.password_hash = SHA2(CONCAT(user_info.salt, passw), 256);
+    user_info.password_hash = SHA2(CONCAT(user_info.salt, passw), 256)
+  GROUP BY username;
   IF temp = 0 THEN
 	  RETURN 0;
   END IF;
