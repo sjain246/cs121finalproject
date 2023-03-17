@@ -72,7 +72,7 @@ DELIMITER ;
 -- in the user_info table.  Returns 1 if the user appears in the table, and the
 -- specified password hashes to the value for the user. Otherwise returns 0.
 DELIMITER !
-CREATE FUNCTION authenticate(username VARCHAR(20), password VARCHAR(20))
+CREATE FUNCTION authenticate(usern VARCHAR(20), passw VARCHAR(20))
 RETURNS TINYINT DETERMINISTIC
 BEGIN
   -- TODO
@@ -80,8 +80,8 @@ BEGIN
   DECLARE rtemp INT DEFAULT 0;
   SELECT COUNT(username), role INTO temp, rtemp
   FROM user_info 
-  WHERE user_info.username = username AND 
-    user_info.password_hash = SHA2(CONCAT(user_info.salt, password), 256);
+  WHERE user_info.username = usern AND 
+    user_info.password_hash = SHA2(CONCAT(user_info.salt, passw), 256);
   IF temp = 0 THEN
 	  RETURN 0;
   END IF;
