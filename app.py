@@ -85,7 +85,7 @@ def authenticate(maybeusername, maybepassword):
         )
 
         cursor = conn.cursor()
-        sql = "SELECT authenticate(%s, %s)" % (maybeusername, maybepassword)
+        sql = "SELECT authenticate(%s, %s)" % ("\'" + maybeusername + "\'", "\'" + maybepassword + "\'")
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
