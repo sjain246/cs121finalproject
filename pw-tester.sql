@@ -1,5 +1,5 @@
-CALL sp_add_user('alex', 'hello');
-CALL sp_add_user('bowie', 'goodbye');
+CALL sp_add_user('alex', 'hello', 1);
+CALL sp_add_user('bowie', 'goodbye', 2);
 SELECT authenticate('chaka', 'hello');     -- Should return 0 (false)
 SELECT authenticate('alex', 'goodbye');    -- Should return 0 (false)
 SELECT authenticate('alex', 'hello');      -- Should return 1 (true)

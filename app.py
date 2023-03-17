@@ -32,19 +32,27 @@ DEBUG = True
 # ----------------------------------------------------------------------
 # SQL Utility Functions
 # ----------------------------------------------------------------------
-def get_conn():
+def get_conn(role):
     """"
     Returns a connected MySQL connector instance, if connection is successful.
     If unsuccessful, exits.
     """
+    if role == 1:
+        usern = 'appclient'
+        passw = 'clientpw'
+    elif role == 2:
+        usern = 'appadmin'
+        passw = 'adminpw'
+    else:
+        sys.stderr('An internal error occurred, please contact the administrator.')
     try:
         conn = mysql.connector.connect(
           host='localhost',
-          user='appadmin',
+          user=usern,
           # Find port in MAMP or MySQL Workbench GUI or with
           # SHOW VARIABLES WHERE variable_name LIKE 'port';
           port='3306',  # this may change!
-          password='adminpw',
+          password=passw,
           database='flightdb' # replace this with your database name
         )
         print('Successfully connected.')
@@ -57,6 +65,44 @@ def get_conn():
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR and DEBUG:
             sys.stderr('Incorrect username or password when connecting to DB.')
         elif err.errno == errorcode.ER_BAD_DB_ERROR and DEBUG:
+            sys.stderr('Database does not exist.')
+        elif DEBUG:
+            sys.stderr(err)
+        else:
+            # A fine catchall client-facing message.
+            sys.stderr('An error occurred, please contact the administrator.')
+        sys.exit(1)
+def authenticate(maybeusername, maybepassword):
+    try:
+        conn = mysql.connector.connect(
+          host='localhost',
+          user='appclient',
+          # Find port in MAMP or MySQL Workbench GUI or with
+          # SHOW VARIABLES WHERE variable_name LIKE 'port';
+          port='3306',  # this may change!
+          password='clientpw',
+          database='flightdb' # replace this with your database name
+        )
+
+        cursor = conn.cursor()
+        sql = "SELECT authenticate(%s, %s)" % (maybeusername, maybepassword)
+        cursor.execute(sql)
+        # row = cursor.fetchone()
+        rows = cursor.fetchall()
+        if not rows:
+            sys.stderr("Username does not exist!")
+        if len(rows) != 1:
+            sys.stderr("Multiple users with this username")
+        else:
+            for row in rows:
+                (col1val) = (row) # tuple unpacking!
+                return(col1val)
+    except mysql.connector.Error as err:
+        # Remember that this is specific to _database_ users, not
+        # application users. So is probably irrelevant to a client in your
+        # simulated program. Their user information would be in a users table
+        # specific to your database; hence the DEBUG use.
+        if err.errno == errorcode.ER_BAD_DB_ERROR and DEBUG:
             sys.stderr('Database does not exist.')
         elif DEBUG:
             sys.stderr(err)
@@ -80,8 +126,11 @@ def get_avg_delays():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -108,8 +157,11 @@ def count_port_pairs():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -135,8 +187,11 @@ def get_min_avg_day():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -166,8 +221,11 @@ def min_avg_port_pair():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -197,8 +255,11 @@ def max_avg_port_pair():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -221,8 +282,11 @@ def get_model_avgs():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -248,8 +312,11 @@ def get_min_airline():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -272,8 +339,11 @@ def get_avg_dist_airline():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -297,8 +367,11 @@ def get_dist_vs_delay():
         cursor.execute(sql)
         # row = cursor.fetchone()
         rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
+            print(col1val)
             # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -381,20 +454,49 @@ def show_admin_options():
         quit_ui()
     elif ans == '':
         pass
+
+def home_screen():
+    """
+    Displays options specific for admins, such as adding new data <x>,
+    modifying <x> based on a given id, removing <x>, etc.
+    """
+    print('Welcome to FlightDB, an interface for interacting with US domestic airline data ')
+    print('  (l) - Login with my credentials')
+    print('  (q) - quit')
+    print()
+    ans = input('Enter an option: ').lower()
+    if ans == 'q':
+        quit_ui()
+    elif ans == 'l':
+        maybeusername = input("Enter your username: ")
+        maybepassword = input("Enter your password: ")
+        role = authenticate(maybeusername, maybepassword)
+        if role == 0:
+            print("Login Failed!")
+        else:
+            conn = get_conn(role)
+            main(role)
+
 def quit_ui():
     """
     Quits the program, printing a good bye message to the user.
     """
     print('Good bye!')
     exit()
-def main():
+def main(role):
     """
     Main function for starting things up.
     """
-    show_options()
+    if role == 1:
+        show_options()
+    elif role == 2:
+        show_admin_options()
+    else:
+        sys.stderr("An internal error occurred, please contact the administrator.")
+        quit_ui()
 if __name__ == '__main__':
     # This conn is a global object that other functions can access.
     # You'll need to use cursor = conn.cursor() each time you are
     # about to execute a query with cursor.execute(<sqlquery>
-    conn = get_conn()
-    main()
+    conn = 0
+    home_screen()

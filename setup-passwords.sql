@@ -44,7 +44,11 @@ CREATE TABLE user_info (
     -- represented as 2 characters.  Thus, 256 / 8 * 2 = 64.
     -- We can use BINARY or CHAR here; BINARY simply has a different
     -- definition for comparison/sorting than CHAR.
-    password_hash BINARY(64) NOT NULL
+    password_hash BINARY(64) NOT NULL,
+    -- integer representing the role of the user
+    -- 1 indicates a client
+    -- 2 indicates an admin
+    role TINYINT NOT NULL
 );
 
 -- [Problem 1a]
@@ -52,13 +56,13 @@ CREATE TABLE user_info (
 -- of 20 characters). Salts the password with a newly-generated salt value,
 -- and then the salt and hash values are both stored in the table.
 DELIMITER !
-CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20))
+CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20), role TINYINT DEFAULT 0)
 BEGIN
   -- TODO
   DECLARE salt VARCHAR(20) DEFAULT '';
   SET salt = make_salt(8);
   INSERT INTO user_info VALUES 
-    (new_username, salt, SHA2(CONCAT(salt, password), 256));
+    (new_username, salt, SHA2(CONCAT(salt, password), 256), role);
 END !
 DELIMITER ;
 
@@ -72,23 +76,29 @@ RETURNS TINYINT DETERMINISTIC
 BEGIN
   -- TODO
   DECLARE temp INT DEFAULT 0;
-  SELECT COUNT(username) INTO temp
+  DECLARE rtemp INT DEFAULT 0;
+  SELECT COUNT(username), role INTO temp, rtemp
   FROM user_info 
   WHERE user_info.username = username AND 
     user_info.password_hash = SHA2(CONCAT(user_info.salt, password), 256);
-  IF temp > 0 THEN
-	  RETURN 1;
-  ELSE
+  IF temp = 0 THEN
 	  RETURN 0;
   END IF;
+  IF rtemp = 1 THEN
+    RETURN 1;
+  END IF;
+  IF rtemp = 2 THEN
+    RETURN 2;
+  END IF;
+  RETURN 3;
 END !
 DELIMITER ;
 
 -- [Problem 1c]
 -- Add at least two users into your user_info table so that when we run this file,
 -- we will have examples users in the database.
-CALL sp_add_user('eyhan', 'password1121%9');
-CALL sp_add_user('sjain3', 'strongpass38:*3');
+CALL sp_add_user('eyhan', 'password1121%9', 2);
+CALL sp_add_user('sjain3', 'strongpass38:*3', 2);
 
 -- [Problem 1d]
 -- Optional: Create a procedure sp_change_password to generate a new salt and change the given
