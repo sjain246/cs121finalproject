@@ -472,9 +472,7 @@ def home_screen():
         role = authenticate(maybeusername, maybepassword) [0][0]
         if role == 0:
             print("Login Failed!")
-        else:
-            conn = get_conn(role)
-            main(role)
+        return role
 
 def quit_ui():
     """
@@ -497,5 +495,7 @@ if __name__ == '__main__':
     # This conn is a global object that other functions can access.
     # You'll need to use cursor = conn.cursor() each time you are
     # about to execute a query with cursor.execute(<sqlquery>
-    conn = 0
-    home_screen()
+    r = home_screen()
+    if r == 1 or r == 2:
+        conn = get_conn(r)
+        main(r)
