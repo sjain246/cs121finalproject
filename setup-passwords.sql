@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS user_info;
 DROP PROCEDURE IF EXISTS sp_add_user;
 DROP FUNCTION IF EXISTS authenticate;
+DROP TABLE IF EXISTS make_salt;
 
 -- (Provided) This function generates a specified number of characters for using as a
 -- salt in passwords.
@@ -56,7 +57,7 @@ CREATE TABLE user_info (
 -- of 20 characters). Salts the password with a newly-generated salt value,
 -- and then the salt and hash values are both stored in the table.
 DELIMITER !
-CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20), role TINYINT DEFAULT 0)
+CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20), role TINYINT)
 BEGIN
   -- TODO
   DECLARE salt VARCHAR(20) DEFAULT '';
