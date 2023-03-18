@@ -388,13 +388,112 @@ def add_new_route():
     flight_num = flight_num.strip()
     if not (flight_num.is_digit()):
         return "Invalid flight number"
+    flight_num = (int)(flight_num)
+    
     carrier_code = input("Enter the carrier code: ")
     carrier_code = carrier_code.strip()
-    if not (carrier_code.is_digit() and len(carrier_code) == 3):
-        return "Invalid carrier code: must be 3 digits"
+    if not (carrier_code.is_digit() and len(carrier_code) <= 3):
+        return "Invalid carrier code: at most 3 digits"
+    
     depart_time = input("Enter the departure time: ")
     depart_time = depart_time.strip()
-    sql = "CALL sp_newroute (%d, %s, \'%s\')" % flight_num, carrier_code, depart_time
+
+    arriv_time = input("Enter the arrial time: ")
+    arriv_time = arriv_time.strip()
+
+    tail_num = input("Enter the tail number: ")
+    tail_num = tail_num.strip()
+    if not (len(tail_num) <= 6):
+        return "Invalid tail number: at most 6 digits"
+    
+    is_cancelled = input("Cancellation (Y/N): ")
+    is_cancelled = is_cancelled.strip()
+    if is_cancelled == 'Y':
+        is_cancelled = 1
+    elif is_cancelled == 'N':
+        is_cancelled = 0
+    else:
+        return "Invalid input for cancellation"
+    
+    origin_code = input("IATA code of origin airport: ")
+    origin_code = origin_code.strip()
+    if not (len(origin_code) == 6):
+        return "Invalid code: must be 3 digits"
+    
+    destination_code = input("IATA code of destination airport: ")
+    destination_code = destination_code.strip()
+    if not (len(destination_code) == 6):
+        return "Invalid code: must be 3 digits"
+    
+    distance = input("Distance of flight: ")
+    distance = distance.strip()
+    if not (distance.is_digit()):
+        return "Must be a number"
+    distance = (int)(distance)
+
+    day_of_week = input("Day of the week (0:Sunday, 1:Monday, ..., 6: Saturday): ")
+    day_of_week = day_of_week.strip()
+    if day_of_week not in ['0','1','2','3','4','5','6']:
+        return "Must be a valid day of the week"
+    day_of_week = (int)(day_of_week)
+
+    departure_delay = input("Time of delay at departure: ")
+    departure_delay = departure_delay.strip()
+    if departure_delay == "":
+        departure_delay = "0"
+    if not departure_delay.is_digit():
+        return "Must be a valid day of the week"
+    departure_delay = (int)(departure_delay)
+
+    arrival_delay = input("Time of delay at arrival: ")
+    arrival_delay = arrival_delay.strip()
+    if arrival_delay == "":
+        arrival_delay = "0"
+    if not arrival_delay.is_digit():
+        return "Must be a valid day of the week"
+    arrival_delay = (int)(arrival_delay)
+
+    airline_delay = input("Time of delay due to airline: ")
+    airline_delay = departure_delay.strip()
+    if airline_delay == "":
+        airline_delay = "0"
+    if not airline_delay.is_digit():
+        return "Must be a valid day of the week"
+    airline_delay = (int)(airline_delay)
+
+    weather_delay = input("Time of delay due to weather: ")
+    weather_delay = weather_delay.strip()
+    if weather_delay == "":
+        weather_delay = "0"
+    if not weather_delay.is_digit():
+        return "Must be a valid day of the week"
+    weather_delay = (int)(weather_delay)
+
+    aircraft_delay = input("Time of delay due to aircraft: ")
+    aircraft_delay = aircraft_delay.strip()
+    if aircraft_delay == "":
+        aircraft_delay = "0"
+    if not aircraft_delay.is_digit():
+        return "Must be a valid day of the week"
+    aircraft_delay = (int)(aircraft_delay)
+
+    NAS_delay = input("Time of delay due to NAS: ")
+    NAS_delay = NAS_delay.strip()
+    if NAS_delay == "":
+        NAS_delay = "0"
+    if not NAS_delay.is_digit():
+        return "Must be a valid day of the week"
+    NAS_delay = (int)(NAS_delay)
+
+    security_delay = input("Time of delay due to security: ")
+    security_delay = security_delay.strip()
+    if security_delay == "":
+        security_delay = "0"
+    if not security_delay.is_digit():
+        return "Must be a valid day of the week"
+    security_delay = (int)(security_delay)
+    
+    sql = "CALL sp_newroute (%d, \'%s\', \'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d)" % flight_num, carrier_code, depart_time, arriv_time, tail_num, is_cancelled, origin_code, destination_code, distance, day_of_week, departure_delay, arrival_delay, airline_delay, weather_delay, aircraft_delay, NAS_delay, security_delay
     try:
         cursor.execute(sql)
         conn.commit()
@@ -423,7 +522,7 @@ def add_new_client():
     new_uname = new_uname.strip()
     new_pw = input("New password: ")
     new_pw = new_pw.strip()
-    sql = "CALL sp_add_user(\'" + new_uname + "\', \'" + new_pw + "\', 1);"
+    sql = "CALL sp_add_user(\'%s\', \'%s\', 1);" % new_uname, new_pw
     try:
         cursor.execute(sql)
         conn.commit()
@@ -452,9 +551,10 @@ def add_new_admin():
     new_uname = new_uname.strip()
     new_pw = input("New password: ")
     new_pw = new_pw.strip()
-    sql = "CALL sp_add_user(\'" + new_uname + "\', \'" + new_pw + "\', 2);"
+    sql = "CALL sp_add_user(\'%s\', \'%s\', 2);" % new_uname, new_pw
     try:
         cursor.execute(sql)
+        conn.commit()
         # row = cursor.fetchone()
         # rows = cursor.fetchall()
         # if not rows:
