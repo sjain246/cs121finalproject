@@ -417,12 +417,12 @@ def add_new_route():
     
     origin_code = input("IATA code of origin airport: ")
     origin_code = origin_code.strip()
-    if not (len(origin_code) == 6):
+    if not (len(origin_code) == 3):
         return "Invalid code: must be 3 digits"
     
     destination_code = input("IATA code of destination airport: ")
     destination_code = destination_code.strip()
-    if not (len(destination_code) == 6):
+    if not (len(destination_code) == 3):
         return "Invalid code: must be 3 digits"
     
     distance = input("Distance of flight: ")
