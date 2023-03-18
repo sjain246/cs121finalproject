@@ -14,6 +14,9 @@ Data:
     US domestic flights and their corresponding information.
 
 How to load data from command-line:
+    Prior to loading the data, please ensure that all .csv files are in cr format,
+    and not lf format.
+        .csv files in lf format will not properly load
     Please run the following steps before running app.py to initialize the database and load in the data:
     $ cd your-files
     $ mysql
@@ -26,14 +29,15 @@ How to load data from command-line:
     mysql> source grant-permissions.sql;
     mysql> source queries.sql;
     mysql> quit;
-    $ python3 app.py
 
 How to run Python program:
     After loading the data, please use the following steps to run the Python program
-    $ python3 
-    >>> app.py
+    $ python3 app.py
     The program works as follows:
         Users are greeted by a home page, where they can exit or login with their credentials
+    Initial users, as specified in the adding users section of setup-passwords are:
+        Username: 'eyhan', Password: 'password11219', Role: Client
+        Username: 'sjain3', Password: 'strongpass383', Role: Admin
     If user is a client, a limited version of the menu is displayed with all available 
     functionalities to them.
     If user is an administrator, a full version of the menu is displayed with all functionalities 
