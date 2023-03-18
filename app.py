@@ -364,13 +364,13 @@ def add_new_route():
     flight_num = input("Enter the flight number: ")
     flight_num = flight_num.strip()
     if flight_num == "" or not (flight_num.isdigit()):
-        return "Invalid flight number"
+        sys.stderr("Invalid flight number")
     flight_num = (int)(flight_num)
     
     carrier_code = input("Enter the 2-3 character carrier code: ")
     carrier_code = carrier_code.strip()
     if not (len(carrier_code) <= 3 and len(carrier_code) > 0):
-        return "Invalid carrier code: at most 3 digits"
+        sys.stderr("Invalid carrier code: at most 3 digits")
     
     depart_time = input("Enter the departure time in YYYY-MM-DD HH:MM:SS format: ")
     depart_time = depart_time.strip()
@@ -381,7 +381,7 @@ def add_new_route():
     tail_num = input("Enter the upto 6 character tail number: ")
     tail_num = tail_num.strip()
     if not (len(tail_num) <= 6 and len(tail_num) > 0):
-        return "Invalid tail number: at most 6 digits"
+        sys.stderr("Invalid tail number: at most 6 digits")
     
     is_cancelled = input("Cancellation (Y/N): ")
     is_cancelled = is_cancelled.strip()
@@ -390,84 +390,84 @@ def add_new_route():
     elif is_cancelled == 'N':
         is_cancelled = 0
     else:
-        return "Invalid input for cancellation"
+        sys.stderr("Invalid input for cancellation")
     
     origin_code = input("IATA code of origin airport: ")
     origin_code = origin_code.strip()
     if not (len(origin_code) == 3):
-        return "Invalid code: must be 3 digits"
+        sys.stderr("Invalid code: must be 3 digits")
     
     destination_code = input("IATA code of destination airport: ")
     destination_code = destination_code.strip()
     if not (len(destination_code) == 3):
-        return "Invalid code: must be 3 digits"
+        sys.stderr("Invalid code: must be 3 digits")
     
     distance = input("Distance of flight: ")
     distance = distance.strip()
     if not (distance.isdigit()):
-        return "Must be a number"
+        sys.stderr("Must be a number")
     distance = (int)(distance)
 
     day_of_week = input("Day of the week (1:Monday, 2:Tuesday, ..., 7: Sunday): ")
     day_of_week = day_of_week.strip()
     if day_of_week not in ['1','2','3','4','5','6', '7']:
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid day of the week")
     day_of_week = (int)(day_of_week)
 
-    departure_delay = input("Time of delay at departure: ")
+    departure_delay = input("Time of delay at departure in minutes: ")
     departure_delay = departure_delay.strip()
     if departure_delay == "":
         departure_delay = "0"
     if not departure_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid delay in minutes")
     departure_delay = (int)(departure_delay)
 
-    arrival_delay = input("Time of delay at arrival: ")
+    arrival_delay = input("Time of delay at arrival in minutes: ")
     arrival_delay = arrival_delay.strip()
     if arrival_delay == "":
         arrival_delay = "0"
     if not arrival_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid delay in minutes")
     arrival_delay = (int)(arrival_delay)
 
-    airline_delay = input("Time of delay due to airline: ")
+    airline_delay = input("Time of delay due to airline in minutes: ")
     airline_delay = airline_delay.strip()
     if airline_delay == "":
         airline_delay = "0"
     if not airline_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid delay in minutes")
     airline_delay = (int)(airline_delay)
 
-    weather_delay = input("Time of delay due to weather: ")
+    weather_delay = input("Time of delay due to weather in minutes: ")
     weather_delay = weather_delay.strip()
     if weather_delay == "":
         weather_delay = "0"
     if not weather_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid delay in minutes")
     weather_delay = (int)(weather_delay)
 
-    aircraft_delay = input("Time of delay due to aircraft: ")
+    aircraft_delay = input("Time of delay due to aircraft in minutes: ")
     aircraft_delay = aircraft_delay.strip()
     if aircraft_delay == "":
         aircraft_delay = "0"
     if not aircraft_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid delay in minutes")
     aircraft_delay = (int)(aircraft_delay)
 
-    NAS_delay = input("Time of delay due to NAS: ")
+    NAS_delay = input("Time of delay due to NAS in minutes: ")
     NAS_delay = NAS_delay.strip()
     if NAS_delay == "":
         NAS_delay = "0"
     if not NAS_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid delay in minutes")
     NAS_delay = (int)(NAS_delay)
 
-    security_delay = input("Time of delay due to security: ")
+    security_delay = input("Time of delay due to security in minutes: ")
     security_delay = security_delay.strip()
     if security_delay == "":
         security_delay = "0"
     if not security_delay.isdigit():
-        return "Must be a valid day of the week"
+        sys.stderr("Must be a valid day of the week")
     security_delay = (int)(security_delay)
     
     sql = "CALL sp_new_route (%d, \'%s\', \'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d);" % (flight_num, carrier_code, depart_time, arriv_time, tail_num, is_cancelled, origin_code, destination_code, distance, day_of_week, departure_delay, arrival_delay, airline_delay, weather_delay, aircraft_delay, NAS_delay, security_delay)
