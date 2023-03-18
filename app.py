@@ -593,10 +593,10 @@ def show_admin_options():
     modifying <x> based on a given id, removing <x>, etc.
     """
     print('What would you like to do? ')
-    print('  (C) - add a new client to the database')
-    print('  (A) - add a new admin to the database')
-    print('  (U) - upgrade an existing client to an admin')
-    print('  (D) - downgrade an existing admin to a client')
+    print('  (AC) - add a new client to the database')
+    print('  (AA) - add a new admin to the database')
+    print('  (UC) - upgrade an existing client to an admin')
+    print('  (DA) - downgrade an existing admin to a client')
     print('  (I) - insert a new route')
     
     print('  (a) - get average delay time for across all airlines')
@@ -614,15 +614,15 @@ def show_admin_options():
     ans = input('Enter an option: ').lower()
     if ans == 'q':
         quit_ui()
-    elif ans == 'C':
+    elif ans == 'ac':
         add_new_client()
-    elif ans == 'A':
+    elif ans == 'aa':
         add_new_admin()
-    elif ans == 'U':
+    elif ans == 'uc':
         client_to_admin()
-    elif ans == 'D':
+    elif ans == 'da':
         admin_to_client()
-    elif ans == 'I':
+    elif ans == 'i':
         add_new_route()
 
     elif ans == 'q':

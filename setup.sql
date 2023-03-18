@@ -82,11 +82,11 @@ CREATE TABLE route (
     -- at least 2 characters
     carrier_code VARCHAR(3) NOT NULL, 
     -- the associated number of the flight
-    flight_num SMALLINT,
+    flight_num SMALLINT NOT NULL,
     -- scheduled time of departure
-    depart_time TIMESTAMP, 
+    depart_time TIMESTAMP NOT NULL, 
     -- scheduled time of arrival
-    arrival_time TIMESTAMP,
+    arrival_time TIMESTAMP NOT NULL,
     -- total calculated sum of delay times
     total_delay INT DEFAULT NULL,
     -- tail number of the aircraft
