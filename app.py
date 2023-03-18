@@ -431,9 +431,9 @@ def add_new_route():
         return "Must be a number"
     distance = (int)(distance)
 
-    day_of_week = input("Day of the week (0:Sunday, 1:Monday, ..., 6: Saturday): ")
+    day_of_week = input("Day of the week (1:Sunday, 2:Monday, ..., 7: Saturday): ")
     day_of_week = day_of_week.strip()
-    if day_of_week not in ['0','1','2','3','4','5','6']:
+    if day_of_week not in ['1','2','3','4','5','6', '7']:
         return "Must be a valid day of the week"
     day_of_week = (int)(day_of_week)
 
@@ -454,7 +454,7 @@ def add_new_route():
     arrival_delay = (int)(arrival_delay)
 
     airline_delay = input("Time of delay due to airline: ")
-    airline_delay = departure_delay.strip()
+    airline_delay = airline_delay.strip()
     if airline_delay == "":
         airline_delay = "0"
     if not airline_delay.isdigit():
