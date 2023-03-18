@@ -386,13 +386,13 @@ def add_new_route():
     # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     flight_num = input("Enter the flight number: ")
     flight_num = flight_num.strip()
-    if not (flight_num.is_digit()):
+    if not (flight_num.isdigit()):
         return "Invalid flight number"
     flight_num = (int)(flight_num)
     
     carrier_code = input("Enter the carrier code: ")
     carrier_code = carrier_code.strip()
-    if not (carrier_code.is_digit() and len(carrier_code) <= 3):
+    if not (carrier_code.isdigit() and len(carrier_code) <= 3):
         return "Invalid carrier code: at most 3 digits"
     
     depart_time = input("Enter the departure time: ")
@@ -427,7 +427,7 @@ def add_new_route():
     
     distance = input("Distance of flight: ")
     distance = distance.strip()
-    if not (distance.is_digit()):
+    if not (distance.isdigit()):
         return "Must be a number"
     distance = (int)(distance)
 
@@ -441,7 +441,7 @@ def add_new_route():
     departure_delay = departure_delay.strip()
     if departure_delay == "":
         departure_delay = "0"
-    if not departure_delay.is_digit():
+    if not departure_delay.isdigit():
         return "Must be a valid day of the week"
     departure_delay = (int)(departure_delay)
 
@@ -449,7 +449,7 @@ def add_new_route():
     arrival_delay = arrival_delay.strip()
     if arrival_delay == "":
         arrival_delay = "0"
-    if not arrival_delay.is_digit():
+    if not arrival_delay.isdigit():
         return "Must be a valid day of the week"
     arrival_delay = (int)(arrival_delay)
 
@@ -457,7 +457,7 @@ def add_new_route():
     airline_delay = departure_delay.strip()
     if airline_delay == "":
         airline_delay = "0"
-    if not airline_delay.is_digit():
+    if not airline_delay.isdigit():
         return "Must be a valid day of the week"
     airline_delay = (int)(airline_delay)
 
@@ -465,7 +465,7 @@ def add_new_route():
     weather_delay = weather_delay.strip()
     if weather_delay == "":
         weather_delay = "0"
-    if not weather_delay.is_digit():
+    if not weather_delay.isdigit():
         return "Must be a valid day of the week"
     weather_delay = (int)(weather_delay)
 
@@ -473,7 +473,7 @@ def add_new_route():
     aircraft_delay = aircraft_delay.strip()
     if aircraft_delay == "":
         aircraft_delay = "0"
-    if not aircraft_delay.is_digit():
+    if not aircraft_delay.isdigit():
         return "Must be a valid day of the week"
     aircraft_delay = (int)(aircraft_delay)
 
@@ -481,7 +481,7 @@ def add_new_route():
     NAS_delay = NAS_delay.strip()
     if NAS_delay == "":
         NAS_delay = "0"
-    if not NAS_delay.is_digit():
+    if not NAS_delay.isdigit():
         return "Must be a valid day of the week"
     NAS_delay = (int)(NAS_delay)
 
@@ -489,7 +489,7 @@ def add_new_route():
     security_delay = security_delay.strip()
     if security_delay == "":
         security_delay = "0"
-    if not security_delay.is_digit():
+    if not security_delay.isdigit():
         return "Must be a valid day of the week"
     security_delay = (int)(security_delay)
     
