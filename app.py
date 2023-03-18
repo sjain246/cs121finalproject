@@ -386,13 +386,13 @@ def add_new_route():
     # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     flight_num = input("Enter the flight number: ")
     flight_num = flight_num.strip()
-    if not (flight_num.isdigit()):
+    if flight_num == "" or not (flight_num.isdigit()):
         return "Invalid flight number"
     flight_num = (int)(flight_num)
     
     carrier_code = input("Enter the carrier code: ")
     carrier_code = carrier_code.strip()
-    if not (carrier_code.isdigit() and len(carrier_code) <= 3):
+    if not (len(carrier_code) <= 3):
         return "Invalid carrier code: at most 3 digits"
     
     depart_time = input("Enter the departure time: ")
