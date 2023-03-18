@@ -367,18 +367,18 @@ def add_new_route():
         return "Invalid flight number"
     flight_num = (int)(flight_num)
     
-    carrier_code = input("Enter the carrier code: ")
+    carrier_code = input("Enter the 2-3 character carrier code: ")
     carrier_code = carrier_code.strip()
     if not (len(carrier_code) <= 3 and len(carrier_code) > 0):
         return "Invalid carrier code: at most 3 digits"
     
-    depart_time = input("Enter the departure time: ")
+    depart_time = input("Enter the departure time in YYYY-MM-DD HH:MM:SS format: ")
     depart_time = depart_time.strip()
 
-    arriv_time = input("Enter the arrial time: ")
+    arriv_time = input("Enter the arrial time in YYYY-MM-DD HH:MM:SS format: ")
     arriv_time = arriv_time.strip()
 
-    tail_num = input("Enter the tail number: ")
+    tail_num = input("Enter the upto 6 character tail number: ")
     tail_num = tail_num.strip()
     if not (len(tail_num) <= 6 and len(tail_num) > 0):
         return "Invalid tail number: at most 6 digits"
