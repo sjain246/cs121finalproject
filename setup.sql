@@ -1,3 +1,4 @@
+DROP INDEX idx_route ON route;
 DROP TABLE IF EXISTS route;
 DROP TABLE IF EXISTS delay_info;
 DROP TABLE IF EXISTS airline;
@@ -112,3 +113,5 @@ CREATE TABLE route (
     FOREIGN KEY (origin_code) REFERENCES airport(port_code),
     FOREIGN KEY (destination_code) REFERENCES airport(port_code)
 );
+
+CREATE INDEX idx_route ON route (total_delay);
