@@ -392,7 +392,7 @@ def add_new_route():
     
     carrier_code = input("Enter the carrier code: ")
     carrier_code = carrier_code.strip()
-    if not (len(carrier_code) <= 3):
+    if not (len(carrier_code) <= 3 and len(carrier_code) > 0):
         return "Invalid carrier code: at most 3 digits"
     
     depart_time = input("Enter the departure time: ")
@@ -403,7 +403,7 @@ def add_new_route():
 
     tail_num = input("Enter the tail number: ")
     tail_num = tail_num.strip()
-    if not (len(tail_num) <= 6):
+    if not (len(tail_num) <= 6 and len(tail_num) > 0):
         return "Invalid tail number: at most 6 digits"
     
     is_cancelled = input("Cancellation (Y/N): ")
@@ -431,7 +431,7 @@ def add_new_route():
         return "Must be a number"
     distance = (int)(distance)
 
-    day_of_week = input("Day of the week (1:Sunday, 2:Monday, ..., 7: Saturday): ")
+    day_of_week = input("Day of the week (1:Monday, 2:Tuesday, ..., 7: Sunday): ")
     day_of_week = day_of_week.strip()
     if day_of_week not in ['1','2','3','4','5','6', '7']:
         return "Must be a valid day of the week"
@@ -493,7 +493,7 @@ def add_new_route():
         return "Must be a valid day of the week"
     security_delay = (int)(security_delay)
     
-    sql = "CALL sp_newroute (%d, \'%s\', \'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d)" % flight_num, carrier_code, depart_time, arriv_time, tail_num, is_cancelled, origin_code, destination_code, distance, day_of_week, departure_delay, arrival_delay, airline_delay, weather_delay, aircraft_delay, NAS_delay, security_delay
+    sql = "CALL sp_newroute (%d, \'%s\', \'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d);" % flight_num, carrier_code, depart_time, arriv_time, tail_num, is_cancelled, origin_code, destination_code, distance, day_of_week, departure_delay, arrival_delay, airline_delay, weather_delay, aircraft_delay, NAS_delay, security_delay
     try:
         cursor.execute(sql)
         conn.commit()
