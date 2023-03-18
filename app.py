@@ -1,26 +1,19 @@
 """
-TODO: Student name(s):
-TODO: Student email(s):
+TODO: Student name(s): Eric Han, Sahil Jain
+TODO: Student email(s): eyhan@caltech.edu, sjain3@caltech.edu
 TODO: High-level program overview
 ******************************************************************************
-This is a template you may start with for your Final Project application.
-You may choose to modify it, or you may start with the example function
-stubs (most of which are incomplete).
-Some sections are provided as recommended program breakdowns, but are optional
-to keep, and you will probably want to extend them based on your application's
-features.
-TODO:
-- Make a copy of app-template.py to a more appropriately named file. You can
-  either use app.py or separate a client vs. admin interface with app_client.py,
-  app_admin.py (you can factor out shared code in a third file, which is
-  recommended based on submissions in 22wi).
-- For full credit, remove any irrelevant comments, which are included in the
-  template to help you get started. Replace this program overview with a
-  brief overview of your application as well (including your name/partners name).
-  This includes replacing everything in this *** section!
+User Interface to connect to flightDB database from Python.
+Using command-line arguments to make connections to the database and retrieve 
+information as needed.
+Users are greeted by a home page, where they can exit or login with their credentials
+If user is a client, a limited version of the menu is displayed with all available 
+functionalities to them.
+If user is an administrator, a full version of the menu is displayed with all functionalities 
+for clients and additional functionalities for updating the database and updating 
+user roles.
 ******************************************************************************
 """
-# TODO: Make sure you have these installed with pip3 if needed
 import sys  # to print error messages to sys.stderr
 import mysql.connector
 # To get error codes from the connector, useful for user-friendly
@@ -32,6 +25,11 @@ DEBUG = True
 # ----------------------------------------------------------------------
 # SQL Utility Functions
 # ----------------------------------------------------------------------
+
+# Makes the appropriate connection to the database based on the given role
+# of the connecting user.
+# Inputs: role -> integer indicating the role of the user
+# Output: conn -> database connection object
 def get_conn(role):
     """"
     Returns a connected MySQL connector instance, if connection is successful.
@@ -49,19 +47,13 @@ def get_conn(role):
         conn = mysql.connector.connect(
           host='localhost',
           user=usern,
-          # Find port in MAMP or MySQL Workbench GUI or with
-          # SHOW VARIABLES WHERE variable_name LIKE 'port';
-          port='3306',  # this may change!
+          port='3306', 
           password=passw,
-          database='flightdb' # replace this with your database name
+          database='flightdb'
         )
         print('Successfully connected.')
         return conn
     except mysql.connector.Error as err:
-        # Remember that this is specific to _database_ users, not
-        # application users. So is probably irrelevant to a client in your
-        # simulated program. Their user information would be in a users table
-        # specific to your database; hence the DEBUG use.
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR and DEBUG:
             sys.stderr('Incorrect username or password when connecting to DB.')
         elif err.errno == errorcode.ER_BAD_DB_ERROR and DEBUG:
@@ -72,22 +64,26 @@ def get_conn(role):
             # A fine catchall client-facing message.
             sys.stderr('An error occurred, please contact the administrator.')
         sys.exit(1)
+
+# Makes a local connection to the database to authenticate the user
+# Determines if the user is in the database, and if so, whether they are 
+# a client or an admin
+# Inputs: maybeusername -> string indicating the username to be authenticated
+#         maybepassword -> string indicating the password to be authenticated
+# Output: col1val -> role of the user if they exist
 def authenticate(maybeusername, maybepassword):
     try:
         conn = mysql.connector.connect(
           host='localhost',
           user='appadmin',
-          # Find port in MAMP or MySQL Workbench GUI or with
-          # SHOW VARIABLES WHERE variable_name LIKE 'port';
-          port='3306',  # this may change!
+          port='3306',
           password='adminpw',
-          database='flightdb' # replace this with your database name
+          database='flightdb'
         )
 
         cursor = conn.cursor()
         sql = "SELECT authenticate(%s, %s)" % ("\'" + maybeusername + "\'", "\'" + maybepassword + "\'")
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             sys.stderr("Username does not exist!")
@@ -97,10 +93,6 @@ def authenticate(maybeusername, maybepassword):
                 sys.stderr("Username does not exist!")
             return col1val
     except mysql.connector.Error as err:
-        # Remember that this is specific to _database_ users, not
-        # application users. So is probably irrelevant to a client in your
-        # simulated program. Their user information would be in a users table
-        # specific to your database; hence the DEBUG use.
         if err.errno == errorcode.ER_BAD_DB_ERROR and DEBUG:
             sys.stderr('Database does not exist.')
         elif DEBUG:
@@ -112,39 +104,38 @@ def authenticate(maybeusername, maybepassword):
 # ----------------------------------------------------------------------
 # Functions for Command-Line Options/Query Execution
 # ----------------------------------------------------------------------
+# Calculates the average delay time across all airlines in the database.
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def get_avg_delays():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT airline_name, AVG(total_delay) AS avg_delay
              FROM route NATURAL LEFT JOIN airline
              GROUP BY carrier_code;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while calculating average delays')
+
+# Counts the number of origin/destination airport pairs
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def count_port_pairs():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT a1.port_name AS origin_name, a2.port_name AS dest_name, 
              COUNT(*) AS num_routes
          FROM (route JOIN airport AS a1 
@@ -154,28 +145,26 @@ def count_port_pairs():
          GROUP BY origin_code, destination_code;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while counting airports')
+
+# Calculates the day of the week with the least delay
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def get_min_avg_day():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT day_of_week
              FROM
                  (SELECT day_of_week, AVG(total_delay) AS avg_delay
@@ -184,28 +173,26 @@ def get_min_avg_day():
              ORDER BY avg_delay ASC LIMIT 1;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred when finding the day of the week with the smallest delay')
+
+# Finds the origin/destination pair with the lowest delay time
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def min_avg_port_pair():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT origin_name, dest_name 
              FROM 
                  (SELECT a1.port_name AS origin_name, a2.port_name AS dest_name, 
@@ -218,28 +205,26 @@ def min_avg_port_pair():
              ORDER BY avg_delay ASC LIMIT 1;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while finding airports with the lowest delay')
+
+# Finds the origin/destination pair with the highest delay time
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def max_avg_port_pair():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT origin_name, dest_name 
              FROM 
                  (SELECT a1.port_name AS origin_name, a2.port_name AS dest_name, 
@@ -252,55 +237,51 @@ def max_avg_port_pair():
              ORDER BY avg_delay DESC LIMIT 1;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while finding airports with the highest delay')
+
+# Calculates the average delay time based on the airplane model
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def get_model_avgs():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT manufacturer, model, AVG(total_delay) AS avg_delay
              FROM route NATURAL LEFT JOIN plane
              GROUP BY manufacturer, model;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while computing aircraft model averages')
+
+# Finds the airline with the lowest amount of delays
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def get_min_airline():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT airline_name 
              FROM 
                  (SELECT airline_name, AVG(total_delay) AS avg_delay
@@ -309,81 +290,77 @@ def get_min_airline():
              ORDER BY avg_delay ASC LIMIT 1;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred while finding the airline with the shortest delay')
+
+# Calculates the average distance travelled per flight for each airline
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def get_avg_dist_airline():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT airline_name, AVG(distance) AS avg_dist
              FROM route NATURAL LEFT JOIN airline
              GROUP BY carrier_code;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while accessing the data')
+
+# Calculates the average delay for each distance of flight travelled
+# Prints results to user
+# Inputs: N/A
+# Output: N/A
 def get_dist_vs_delay():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     sql = """SELECT distance, AVG(total_delay)
              FROM route
              GROUP BY distance
              ORDER BY distance ASC;"""
     try:
         cursor.execute(sql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
         for row in rows:
             (col1val) = (row) # tuple unpacking!
             print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred while accessing distances and delays')
+
+# Adds a new route and all its associated information to the database
+# If no delay times are entered, they default to 0
+# Inputs: N/A
+# Output: N/A
 def add_new_route():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     flight_num = input("Enter the flight number: ")
     flight_num = flight_num.strip()
     if flight_num == "" or not (flight_num.isdigit()):
@@ -493,31 +470,23 @@ def add_new_route():
         return "Must be a valid day of the week"
     security_delay = (int)(security_delay)
     
-    sql = "CALL sp_newroute (%d, \'%s\', \'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d);" % flight_num, carrier_code, depart_time, arriv_time, tail_num, is_cancelled, origin_code, destination_code, distance, day_of_week, departure_delay, arrival_delay, airline_delay, weather_delay, aircraft_delay, NAS_delay, security_delay
+    sql = "CALL sp_new_route (%d, \'%s\', \'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d);" % (flight_num, carrier_code, depart_time, arriv_time, tail_num, is_cancelled, origin_code, destination_code, distance, day_of_week, departure_delay, arrival_delay, airline_delay, weather_delay, aircraft_delay, NAS_delay, security_delay)
     try:
         cursor.execute(sql)
         conn.commit()
-        # row = cursor.fetchone()
-        # rows = cursor.fetchall()
-        # if not rows:
-        #     return "No results found!"
-        # for row in rows:
-        #     (col1val) = (row) # tuple unpacking!
-        #     print(col1val)
-            # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred while inserting a new route entry into the database')
+
+# Adds a new client, including their username and password to the database
+# Inputs: N/A
+# Output: N/A
 def add_new_client():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     new_uname = input("New username: ")
     new_uname = new_uname.strip()
     new_pw = input("New password: ")
@@ -526,27 +495,19 @@ def add_new_client():
     try:
         cursor.execute(sql)
         conn.commit()
-        # row = cursor.fetchone()
-        # rows = cursor.fetchall()
-        # if not rows:
-        #     return "No results found!"
-        # for row in rows:
-        #     (col1val) = (row) # tuple unpacking!
-        #     print(col1val)
-        #     # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred while creating a new client')
+
+# Adds a new admin, including their username and password to the database
+# Inputs: N/A
+# Output: N/A
 def add_new_admin():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     new_uname = input("New username: ")
     new_uname = new_uname.strip()
     new_pw = input("New password: ")
@@ -555,33 +516,24 @@ def add_new_admin():
     try:
         cursor.execute(sql)
         conn.commit()
-        # row = cursor.fetchone()
-        # rows = cursor.fetchall()
-        # if not rows:
-        #     return "No results found!"
-        # for row in rows:
-        #     (col1val) = (row) # tuple unpacking!
-        #     print(col1val)
-        #     # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred while creating a new administrator')
+
+# Upgrades the role of a given client to that of an admin
+# Inputs: N/A
+# Output: N/A
 def client_to_admin():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     uname = input("Client's username: ")
     uname = uname.strip()
     fsql = "SELECT * FROM user_info WHERE username = \'%s\'" % uname
     try:
         cursor.execute(fsql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
@@ -594,26 +546,24 @@ def client_to_admin():
             ssql = "CALL sp_upgrade_client(\'%s\');" % uname
             cursor.execute(ssql)
             conn.commit()
-        # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred while fetching data to upgrade client to admin')
+
+# Downgrades the role of a given client to that of an admin
+# Inputs: N/A
+# Output: N/A
 def admin_to_client():
     param1 = ''
     cursor = conn.cursor()
-    # Remember to pass arguments as a tuple like so to prevent SQL
-    # injection.
-    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
     uname = input("Administrator's username: ")
     uname = uname.strip()
     fsql = "SELECT * FROM user_info WHERE username = \'%s\'" % uname
     try:
         cursor.execute(fsql)
-        # row = cursor.fetchone()
         rows = cursor.fetchall()
         if not rows:
             return "No results found!"
@@ -626,14 +576,11 @@ def admin_to_client():
             ssql = "CALL sp_downgrade_admin(\'" + uname + "\');"
             cursor.execute(ssql)
             conn.commit()
-        # do stuff with row data
     except mysql.connector.Error as err:
-        # If you're testing, it's helpful to see more details printed.
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
             sys.stderr('An error occurred while fetching data to downgrade admin to client')
 # ----------------------------------------------------------------------
 # Functions for Logging Users In
@@ -646,12 +593,9 @@ def admin_to_client():
 # ----------------------------------------------------------------------
 # Command-Line Functionality
 # ----------------------------------------------------------------------
-# TODO: Please change these!
 def show_options():
     """
-    Displays options users can choose in the application, such as
-    viewing <x>, filtering results with a flag (e.g. -s to sort)
-    sending a request to do <x>, etc.
+    Displays options users can choose in the application
     """
     print('What would you like to do? ')
     print('  (TODO: provide command-line options)')
@@ -693,8 +637,7 @@ def show_options():
 # using the same database.
 def show_admin_options():
     """
-    Displays options specific for admins, such as adding new data <x>,
-    modifying <x> based on a given id, removing <x>, etc.
+    Displays options specific for admins
     """
     print('What would you like to do? ')
     print('  (AC) - add a new client to the database')
@@ -752,8 +695,7 @@ def show_admin_options():
 
 def home_screen():
     """
-    Displays options specific for admins, such as adding new data <x>,
-    modifying <x> based on a given id, removing <x>, etc.
+    Displays options available before logging in
     """
     print('Welcome to FlightDB, an interface for interacting with US domestic airline data ')
     print('  (l) - Login with my credentials')
@@ -788,9 +730,6 @@ def main(role):
         sys.stderr("An internal error occurred, please contact the administrator.")
         quit_ui()
 if __name__ == '__main__':
-    # This conn is a global object that other functions can access.
-    # You'll need to use cursor = conn.cursor() each time you are
-    # about to execute a query with cursor.execute(<sqlquery>
     r = home_screen()
     if r == 1 or r == 2:
         conn = get_conn(r)

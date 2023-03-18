@@ -9,6 +9,9 @@ Data:
     all of this data, we can not only provide a lot of useful queried information to 
     potential users about flight cancellations, but also make relatively accurate predictions
     and recommendations on what flights to take based on historical patterns.
+    We pruned the data due to its extremely large size, and kept 993 records from the entire 
+    dataset in which to store in our database. This represents 993 individual records of 
+    US domestic flights and their corresponding information.
 
 How to load data from command-line:
     Please run the following steps before running app.py to initialize the database and load in the data:
@@ -26,7 +29,16 @@ How to load data from command-line:
     $ python3 app.py
 
 How to run Python program:
-
+    After loading the data, please use the following steps to run the Python program
+    $ python3 
+    >>> app.py
+    The program works as follows:
+        Users are greeted by a home page, where they can exit or login with their credentials
+    If user is a client, a limited version of the menu is displayed with all available 
+    functionalities to them.
+    If user is an administrator, a full version of the menu is displayed with all functionalities 
+    for clients and additional functionalities for updating the database and updating 
+    user roles.
 
 Additional features:
     We have provided a few additional features to the setup-passwords.sql file to facilitate 
