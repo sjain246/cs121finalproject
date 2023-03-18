@@ -397,6 +397,7 @@ def add_new_route():
     sql = "CALL sp_newroute (%d, %s, \'%s\')" % flight_num, carrier_code, depart_time
     try:
         cursor.execute(sql)
+        conn.commit()
         # row = cursor.fetchone()
         # rows = cursor.fetchall()
         # if not rows:
@@ -425,6 +426,7 @@ def add_new_client():
     sql = "CALL sp_add_user(\'" + new_uname + "\', \'" + new_pw + "\', 1);"
     try:
         cursor.execute(sql)
+        conn.commit()
         # row = cursor.fetchone()
         # rows = cursor.fetchall()
         # if not rows:
@@ -491,6 +493,7 @@ def client_to_admin():
         else:
             ssql = "CALL sp_upgrade_client(\'%s\');" % uname
             cursor.execute(ssql)
+            conn.commit()
         # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.
@@ -522,6 +525,7 @@ def admin_to_client():
         else:
             ssql = "CALL sp_downgrade_admin(\'" + uname + "\');"
             cursor.execute(ssql)
+            conn.commit()
         # do stuff with row data
     except mysql.connector.Error as err:
         # If you're testing, it's helpful to see more details printed.

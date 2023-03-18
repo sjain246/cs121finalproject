@@ -1,6 +1,8 @@
 -- File for Password Management section of Final Project
 DROP TABLE IF EXISTS user_info;
 DROP PROCEDURE IF EXISTS sp_add_user;
+DROP PROCEDURE IF EXISTS sp_upgrade_client;
+DROP PROCEDURE IF EXISTS sp_downgrade_admin;
 DROP FUNCTION IF EXISTS authenticate;
 DROP TABLE IF EXISTS make_salt;
 
