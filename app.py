@@ -138,7 +138,7 @@ def get_avg_delays():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while calculating average delays')
 def count_port_pairs():
     param1 = ''
     cursor = conn.cursor()
@@ -169,7 +169,7 @@ def count_port_pairs():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while counting airports')
 def get_min_avg_day():
     param1 = ''
     cursor = conn.cursor()
@@ -199,7 +199,7 @@ def get_min_avg_day():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred when finding the day of the week with the smallest delay')
 def min_avg_port_pair():
     param1 = ''
     cursor = conn.cursor()
@@ -233,7 +233,7 @@ def min_avg_port_pair():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while finding airports with the lowest delay')
 def max_avg_port_pair():
     param1 = ''
     cursor = conn.cursor()
@@ -267,7 +267,7 @@ def max_avg_port_pair():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while finding airports with the highest delay')
 def get_model_avgs():
     param1 = ''
     cursor = conn.cursor()
@@ -294,7 +294,7 @@ def get_model_avgs():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while computing aircraft model averages')
 def get_min_airline():
     param1 = ''
     cursor = conn.cursor()
@@ -323,8 +323,7 @@ def get_min_airline():
             sys.stderr(err)
             sys.exit(1)
         else:
-            # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while finding the airline with the shortest delay')
 def get_avg_dist_airline():
     param1 = ''
     cursor = conn.cursor()
@@ -351,7 +350,7 @@ def get_avg_dist_airline():
             sys.exit(1)
         else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while accessing the data')
 def get_dist_vs_delay():
     param1 = ''
     cursor = conn.cursor()
@@ -378,8 +377,160 @@ def get_dist_vs_delay():
             sys.stderr(err)
             sys.exit(1)
         else:
+            sys.stderr('An error occurred while accessing distances and delays')
+def add_new_route():
+    param1 = ''
+    cursor = conn.cursor()
+    # Remember to pass arguments as a tuple like so to prevent SQL
+    # injection.
+    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
+    flight_num = input("Enter the flight number: ")
+    flight_num = flight_num.strip()
+    if not (flight_num.is_digit()):
+        return "Invalid flight number"
+    carrier_code = input("Enter the carrier code: ")
+    carrier_code = carrier_code.strip()
+    if not (carrier_code.is_digit() and len(carrier_code) == 3):
+        return "Invalid carrier code: must be 3 digits"
+    depart_time = input("Enter the departure time: ")
+    depart_time = depart_time.strip()
+    sql = "CALL sp_newroute (%d, %s, \'%s\')" % flight_num, carrier_code, depart_time
+    try:
+        cursor.execute(sql)
+        # row = cursor.fetchone()
+        # rows = cursor.fetchall()
+        # if not rows:
+        #     return "No results found!"
+        # for row in rows:
+        #     (col1val) = (row) # tuple unpacking!
+        #     print(col1val)
+            # do stuff with row data
+    except mysql.connector.Error as err:
+        # If you're testing, it's helpful to see more details printed.
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred while inserting a new route entry into the database')
+def add_new_client():
+    param1 = ''
+    cursor = conn.cursor()
+    # Remember to pass arguments as a tuple like so to prevent SQL
+    # injection.
+    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
+    new_uname = input("New username: ")
+    new_uname = new_uname.strip()
+    new_pw = input("New password: ")
+    new_pw = new_pw.strip()
+    sql = "CALL sp_add_user(\'" + new_uname + "\', \'" + new_pw + "\', 1);"
+    try:
+        cursor.execute(sql)
+        # row = cursor.fetchone()
+        # rows = cursor.fetchall()
+        # if not rows:
+        #     return "No results found!"
+        # for row in rows:
+        #     (col1val) = (row) # tuple unpacking!
+        #     print(col1val)
+        #     # do stuff with row data
+    except mysql.connector.Error as err:
+        # If you're testing, it's helpful to see more details printed.
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred while creating a new client')
+def add_new_admin():
+    param1 = ''
+    cursor = conn.cursor()
+    # Remember to pass arguments as a tuple like so to prevent SQL
+    # injection.
+    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
+    new_uname = input("New username: ")
+    new_uname = new_uname.strip()
+    new_pw = input("New password: ")
+    new_pw = new_pw.strip()
+    sql = "CALL sp_add_user(\'" + new_uname + "\', \'" + new_pw + "\', 2);"
+    try:
+        cursor.execute(sql)
+        # row = cursor.fetchone()
+        # rows = cursor.fetchall()
+        # if not rows:
+        #     return "No results found!"
+        # for row in rows:
+        #     (col1val) = (row) # tuple unpacking!
+        #     print(col1val)
+        #     # do stuff with row data
+    except mysql.connector.Error as err:
+        # If you're testing, it's helpful to see more details printed.
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred while creating a new administrator')
+def client_to_admin():
+    param1 = ''
+    cursor = conn.cursor()
+    # Remember to pass arguments as a tuple like so to prevent SQL
+    # injection.
+    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
+    uname = input("Client's username: ")
+    uname = uname.strip()
+    fsql = "SELECT * FROM user_info WHERE username = \'%s\'" % uname
+    try:
+        cursor.execute(fsql)
+        # row = cursor.fetchone()
+        rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
+        if len(rows) > 1:
+            return "Too many users with this username!"
+        (col1val) = (rows[0]) # tuple unpacking!
+        if col1val[2] == 2:
+            return "User is already an administrator"
+        else:
+            ssql = "CALL sp_upgrade_client(\'%s\');" % uname
+            cursor.execute(ssql)
+        # do stuff with row data
+    except mysql.connector.Error as err:
+        # If you're testing, it's helpful to see more details printed.
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred while fetching data to upgrade client to admin')
+def admin_to_client():
+    param1 = ''
+    cursor = conn.cursor()
+    # Remember to pass arguments as a tuple like so to prevent SQL
+    # injection.
+    # sql = 'SELECT col1 FROM table WHERE col2 = \'%s\';' % (param1, )
+    uname = input("Administrator's username: ")
+    uname = uname.strip()
+    fsql = "SELECT * FROM user_info WHERE username = \'%s\'" % uname
+    try:
+        cursor.execute(fsql)
+        # row = cursor.fetchone()
+        rows = cursor.fetchall()
+        if not rows:
+            return "No results found!"
+        if len(rows) > 1:
+            return "Too many users with this username!"
+        (col1val) = (rows[0]) # tuple unpacking!
+        if col1val[2] == 1:
+            return "User is already a client"
+        else:
+            ssql = "CALL sp_downgrade_admin(\'" + uname + "\');"
+            cursor.execute(ssql)
+        # do stuff with row data
+    except mysql.connector.Error as err:
+        # If you're testing, it's helpful to see more details printed.
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
             # TODO: Please actually replace this :) 
-            sys.stderr('An error occurred, give something useful for clients...')
+            sys.stderr('An error occurred while fetching data to downgrade admin to client')
 # ----------------------------------------------------------------------
 # Functions for Logging Users In
 # ----------------------------------------------------------------------
@@ -442,17 +593,58 @@ def show_admin_options():
     modifying <x> based on a given id, removing <x>, etc.
     """
     print('What would you like to do? ')
-    print('  (x) - something nifty for admins to do')
-    print('  (x) - another nifty thing')
-    print('  (x) - yet another nifty thing')
-    print('  (x) - more nifty things!')
+    print('  (C) - add a new client to the database')
+    print('  (A) - add a new admin to the database')
+    print('  (U) - upgrade an existing client to an admin')
+    print('  (D) - downgrade an existing admin to a client')
+    print('  (I) - insert a new route')
+    
+    print('  (a) - get average delay time for across all airlines')
+    print('  (d) - get the day of the week with the lowest average delay')
+    print('  (c) - gets the number of appearances of distinct origin/destination airport pairs')
+    print('  (lp) - gets the origin/destination airport pair with the lowest average delay')
+    print('  (hp) - gets the origin/destination airport pair with the highest average delay')
+    print('  (m) - gets the average delay time for every aircraft model produced by all mnanufacturers')
+    print('  (l) - gets the airline with the lowest average delay')
+    print('  (d) - gets the average distance travelled per flight for all airlines')
+    print('  (v) - gets a list of flight distances vs their corresponding average delay')
+
     print('  (q) - quit')
     print()
     ans = input('Enter an option: ').lower()
     if ans == 'q':
         quit_ui()
-    elif ans == '':
-        pass
+    elif ans == 'C':
+        add_new_client()
+    elif ans == 'A':
+        add_new_admin()
+    elif ans == 'U':
+        client_to_admin()
+    elif ans == 'D':
+        admin_to_client()
+    elif ans == 'I':
+        add_new_route()
+
+    elif ans == 'q':
+        quit_ui()
+    elif ans == 'a':
+        get_avg_delays()
+    elif ans == 'd':
+        get_min_avg_day()
+    elif ans == 'c':
+        count_port_pairs()
+    elif ans == 'lp':
+        min_avg_port_pair()
+    elif ans == 'hp':
+        max_avg_port_pair()
+    elif ans == 'm':
+        get_model_avgs()
+    elif ans == 'l':
+        get_min_airline()
+    elif ans == 'd':
+        get_avg_dist_airline()
+    elif ans == 'v':
+        get_dist_vs_delay()
 
 def home_screen():
     """

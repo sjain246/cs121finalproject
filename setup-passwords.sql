@@ -67,6 +67,26 @@ BEGIN
 END !
 DELIMITER ;
 
+DELIMITER !
+CREATE PROCEDURE sp_upgrade_client(new_username VARCHAR(20))
+BEGIN
+  -- TODO
+  UPDATE user_info
+  SET role = 2
+  WHERE username = new_username;
+END !
+DELIMITER ;
+
+DELIMITER !
+CREATE PROCEDURE sp_downgrade_admin(new_username VARCHAR(20))
+BEGIN
+  -- TODO
+  UPDATE user_info
+  SET role = 1
+  WHERE username = new_username;
+END !
+DELIMITER ;
+
 -- [Problem 1b]
 -- Authenticates the specified username and password against the data
 -- in the user_info table.  Returns 1 if the user appears in the table, and the
