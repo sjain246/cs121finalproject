@@ -1,1 +1,16 @@
+Link for data: 
 https://github.com/sjain246/cs121finalprojdata
+
+Please follow instructions in readme.txt to download the associated files.
+The instructions are repeated here for your reference:
+
+Downloading data files:
+Please proceed to the github link https://github.com/sjain246/cs121finalprojdata (also included in link-to-data.txt) and download all csv
+files from this repo. Files included are:
+    airline.csv
+    airport.csv
+    delay_info.csv
+    plane.csv
+    routes.csv
+Prior to loading the data, please ensure that all .csv files are in cr format,
+    and not lf format. .csv files in lf format will not properly load.
