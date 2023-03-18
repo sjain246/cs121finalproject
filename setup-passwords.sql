@@ -1,4 +1,8 @@
 -- File for Password Management section of Final Project
+
+-- Note that for setup-passwords, we were given permission by Prof. Hovik
+-- to modify the structure of the procedures to accept a third attribute of 
+-- role.
 DROP TABLE IF EXISTS user_info;
 DROP PROCEDURE IF EXISTS sp_add_user;
 DROP PROCEDURE IF EXISTS sp_upgrade_client;
@@ -57,11 +61,13 @@ CREATE TABLE user_info (
 -- [Problem 1a]
 -- Adds a new user to the user_info table, using the specified password (max
 -- of 20 characters). Salts the password with a newly-generated salt value,
--- and then the salt and hash values are both stored in the table.
+-- and then the salt and hash values are both stored in the table. 
+-- Note that for setup-passwords, we were given permission by Prof. Hovik
+-- to modify the structure of the procedures to accept a third attribute of 
+-- role.
 DELIMITER !
 CREATE PROCEDURE sp_add_user(new_username VARCHAR(20), password VARCHAR(20), role TINYINT)
 BEGIN
-  -- TODO
   DECLARE salt VARCHAR(20) DEFAULT '';
   SET salt = make_salt(8);
   INSERT INTO user_info VALUES 
@@ -72,7 +78,6 @@ DELIMITER ;
 DELIMITER !
 CREATE PROCEDURE sp_upgrade_client(new_username VARCHAR(20))
 BEGIN
-  -- TODO
   UPDATE user_info
   SET role = 2
   WHERE username = new_username;
@@ -82,7 +87,6 @@ DELIMITER ;
 DELIMITER !
 CREATE PROCEDURE sp_downgrade_admin(new_username VARCHAR(20))
 BEGIN
-  -- TODO
   UPDATE user_info
   SET role = 1
   WHERE username = new_username;
@@ -91,8 +95,12 @@ DELIMITER ;
 
 -- [Problem 1b]
 -- Authenticates the specified username and password against the data
--- in the user_info table.  Returns 1 if the user appears in the table, and the
--- specified password hashes to the value for the user. Otherwise returns 0.
+-- in the user_info table.  Returns 1 if the user is a client, and 2 if the 
+-- user is a admin, and the specified password hashes to the value for the 
+-- user. Otherwise returns 0.
+-- Note that for setup-passwords, we were given permission by Prof. Hovik
+-- to modify the structure of the procedures to accept a third attribute of 
+-- role.
 DELIMITER !
 CREATE FUNCTION authenticate(usern VARCHAR(20), passw VARCHAR(20))
 RETURNS TINYINT DETERMINISTIC
@@ -120,6 +128,9 @@ DELIMITER ;
 -- [Problem 1c]
 -- Add at least two users into your user_info table so that when we run this file,
 -- we will have examples users in the database.
+-- Note that for setup-passwords, we were given permission by Prof. Hovik
+-- to modify the structure of the procedures to accept a third attribute of 
+-- role.
 CALL sp_add_user('eyhan', 'password11219', 1);
 CALL sp_add_user('sjain3', 'strongpass383', 2);
 

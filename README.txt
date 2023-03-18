@@ -13,10 +13,18 @@ Data:
     dataset in which to store in our database. This represents 993 individual records of 
     US domestic flights and their corresponding information.
 
+Downloading data files:
+Please proceed to the github link https://github.com/sjain246/cs121finalprojdata (also included in link-to-data.txt) and download all csv
+files from this repo. Files included are:
+    airline.csv
+    airport.csv
+    delay_info.csv
+    plane.csv
+    routes.csv
+Prior to loading the data, please ensure that all .csv files are in cr format,
+    and not lf format. .csv files in lf format will not properly load.
+
 How to load data from command-line:
-    Prior to loading the data, please ensure that all .csv files are in cr format,
-    and not lf format.
-        .csv files in lf format will not properly load
     Please run the following steps before running app.py to initialize the database and load in the data:
     $ cd your-files
     $ mysql
@@ -55,3 +63,7 @@ Additional features:
     administrator, giving them full access to the program.
     Additionally, administrators are able to insert new flight route entries into the database 
     whereas clients may only view them.
+
+Additional notes:
+Note that for setup-passwords, we were given permission by Prof. Hovik
+to modify the structure of the procedures to accept a third attribute of role.
